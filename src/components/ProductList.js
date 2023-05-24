@@ -69,6 +69,7 @@ const ProductList = () => {
       product.title.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .filter(product =>
+      // if a category is selected, the filter will only include products that belong to that category. If no category is selected (or "All" is selected), it will include all products.
       selectedCategory ? product.category === selectedCategory : true
     );
 
@@ -97,6 +98,7 @@ const ProductList = () => {
 
   return (
     <Box>
+      {/* Search input */}
       <Flex justify="center" align="center">
         <Input
           placeholder="Search products"
@@ -106,12 +108,14 @@ const ProductList = () => {
           onChange={searchProduct}
         />
       </Flex>
+      {/* Category selection */}
       <Category
         categories={categories}
         selectedCategory={selectedCategory}
         onCategorySelect={handleCategorySelect}
         allProducts={allProducts}
       />
+      {/* Product grid */}
       <Grid
         templateColumns={`repeat(auto-fit, minmax(${cardSize}, 1fr))`}
         gap={1}
@@ -168,6 +172,7 @@ const ProductList = () => {
               </Box>
             ))}
       </Grid>
+      {/* Pagination */}
       <Pagination setPage={setPage} page={page} totalPage={totalPage} />
     </Box>
   );

@@ -2,18 +2,22 @@ import { Button, Flex } from '@chakra-ui/react';
 import React from 'react';
 
 function Pagination({ setPage, page, totalPage }) {
+  // Handle previous page click
   const handlePrevClick = () => {
     setPage(prevPage => prevPage - 1);
   };
 
+  // Handle next page click
   const handleNextClick = () => {
     setPage(prevPage => prevPage + 1);
   };
 
+  // Handle individual page click
   const handlePageClick = currentPage => {
     return () => setPage(currentPage);
   };
 
+  // Get the array of page numbers to display
   const getPageNumbers = () => {
     const maxButtons = 4;
     const pageNumbers = [];
@@ -85,8 +89,10 @@ function Pagination({ setPage, page, totalPage }) {
 
   return (
     <div>
+      {/* Display pagination buttons */}
       <Flex my={5} justify="center" align="center" justItems="center" gap={2}>
         <Button
+          // Handle previous page click
           colorScheme="teal"
           variant="outline"
           onClick={handlePrevClick}
@@ -95,8 +101,10 @@ function Pagination({ setPage, page, totalPage }) {
         >
           Prev
         </Button>
+        {/* Display page numbers */}
         {getPageNumbers()}
         <Button
+          // Handle next page click
           colorScheme="teal"
           variant="outline"
           onClick={handleNextClick}

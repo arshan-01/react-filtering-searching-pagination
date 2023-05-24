@@ -7,6 +7,7 @@ import {
   useBreakpointValue,
   Flex,
   Input,
+  Skeleton,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Category from './Category';
@@ -20,6 +21,7 @@ const ProductList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loading, setLoading] = useState(true); // Track loading state
   let limitPage = 15;
   const cardSize = useBreakpointValue({
     base: '100%',
@@ -29,6 +31,11 @@ const ProductList = () => {
   });
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    setLoading(true); // Set loading to true when fetching new data
     axios
       .get('https://dummyjson.com/products?limit=100')
       .then(response => {
@@ -44,11 +51,13 @@ const ProductList = () => {
         // Calculate the total number of pages
         const totalPages = Math.ceil(productsData.length / limitPage);
         setTotalPage(totalPages);
+        setLoading(false); // Set loading to false after data is fetched
       })
       .catch(error => {
         console.error('Error fetching product data:', error);
+        setLoading(false); // Set loading to false in case of error
       });
-  }, []);
+  };
 
   const searchProduct = event => {
     setSearchQuery(event.target.value);
@@ -81,6 +90,10 @@ const ProductList = () => {
     page * limitPage
   );
 
+  useEffect(() => {
+    fetchData(); // Fetch new data when the page changes or category is selected
+  }, [page, selectedCategory]);
+
   return (
     <Box>
       <Flex justify="center" align="center">
@@ -99,41 +112,57 @@ const ProductList = () => {
         allProducts={allProducts}
       />
       <Grid templateColumns={`repeat(5, ${cardSize})`} gap={1}>
-        {paginatedProducts.map(product => (
-          <Box
-            key={product.id}
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            p={2}
-          >
-            <Flex justify="center" align="center">
-              <Image
-                src={product.images[0]}
-                alt={product.title}
-                objectFit="cover"
-                boxSize="200px"
-              />
-            </Flex>
-            <Box p="6">
-              <Text fontWeight="semibold" fontSize="md">
-                {product.title}
-              </Text>
-              <Text
-                mt="2"
-                css={css`
-                  display: -webkit-box;
-                  -webkit-line-clamp: 2;
-                  -webkit-box-orient: vertical;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                `}
+        {loading // Display skeleton loading effect while loading
+          ? Array.from({ length: limitPage }).map((_, index) => (
+              <Box
+                key={index}
+                borderWidth="1px"
+                borderRadius="lg"
+                overflow="hidden"
+                p={2}
               >
-                {product.description}
-              </Text>
-            </Box>
-          </Box>
-        ))}
+                <Skeleton height="200px" />
+                <Box p="6">
+                  <Skeleton height="20px" mb="2" />
+                  <Skeleton height="16px" />
+                </Box>
+              </Box>
+            ))
+          : paginatedProducts.map(product => (
+              <Box
+                key={product.id}
+                borderWidth="1px"
+                borderRadius="lg"
+                overflow="hidden"
+                p={2}
+              >
+                <Flex justify="center" align="center">
+                  <Image
+                    src={product.images[0]}
+                    alt={product.title}
+                    objectFit="cover"
+                    boxSize="200px"
+                  />
+                </Flex>
+                <Box p="6">
+                  <Text fontWeight="semibold" fontSize="md">
+                    {product.title}
+                  </Text>
+                  <Text
+                    mt="2"
+                    css={css`
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2;
+                      -webkit-box-orient: vertical;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    `}
+                  >
+                    {product.description}
+                  </Text>
+                </Box>
+              </Box>
+            ))}
       </Grid>
       <Pagination setPage={setPage} page={page} totalPage={totalPage} />
     </Box>

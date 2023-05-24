@@ -111,7 +111,10 @@ const ProductList = () => {
         onCategorySelect={handleCategorySelect}
         allProducts={allProducts}
       />
-      <Grid templateColumns={`repeat(5, ${cardSize})`} gap={1}>
+      <Grid
+        templateColumns={`repeat(${cardSize === '100%' ? 1 : 5}, ${cardSize})`}
+        gap={1}
+      >
         {loading // Display skeleton loading effect while loading
           ? Array.from({ length: limitPage }).map((_, index) => (
               <Box

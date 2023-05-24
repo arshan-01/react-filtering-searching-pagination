@@ -22,13 +22,7 @@ const ProductList = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true); // Track loading state
-  let limitPage = 15;
-  const cardSize = useBreakpointValue({
-    base: '100%',
-    sm: '50%',
-    md: '25%',
-    lg: '20%',
-  });
+  const limitPage = 15;
 
   useEffect(() => {
     fetchData();
@@ -94,6 +88,13 @@ const ProductList = () => {
     fetchData(); // Fetch new data when the page changes or category is selected
   }, [page, selectedCategory]);
 
+  const cardSize = useBreakpointValue({
+    base: '100%',
+    sm: '33.33%',
+    md: '20%',
+    lg: '17%',
+  });
+
   return (
     <Box>
       <Flex justify="center" align="center">
@@ -112,7 +113,7 @@ const ProductList = () => {
         allProducts={allProducts}
       />
       <Grid
-        templateColumns={`repeat(${cardSize === '100%' ? 1 : 5}, ${cardSize})`}
+        templateColumns={`repeat(auto-fit, minmax(${cardSize}, 1fr))`}
         gap={1}
       >
         {loading // Display skeleton loading effect while loading
